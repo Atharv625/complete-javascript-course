@@ -68,7 +68,7 @@ btnHold.addEventListener('click',function(){
     }
 });
 btnNew.addEventListener('click', function () {
-  // Reset game state
+  
   currentScore = 0;
   activePlayer = 0;
   playing = true;
