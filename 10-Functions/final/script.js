@@ -68,7 +68,7 @@ checkIn(flight, jonas);
 
 ///////////////////////////////////////
 // Functions Accepting Callback Functions
-const oneWord = function (str) {
+const oneWord = function (str) {  
   return str.replace(/ /g, '').toLowerCase();
 };
 
