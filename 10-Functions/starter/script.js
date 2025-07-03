@@ -150,7 +150,60 @@
 // document.querySelector('.poll').addEventListener('click',poll.registerNewAnswer.bind(poll));
 // poll.displayResults.call({answers:[5,2,3]}, 'string');
 
-const runOnce =function()
-{
-  
+// const runOnce =function()
+// {
+//   console.log('this will never run again');
+// }
+// runOnce();
+// (function(){
+//   console.log('this will never run again');
+// })();
+
+// (()=>console.log('this will Also never run again'))
+// ();
+
+
+let f;
+const g=function(){
+  const a=22;
+  f=function(){
+    console.log(a*2);
+  }
 }
+
+const h=function()
+{
+  const b=777;
+  f=function()
+  {
+    console.log(b*2);
+  }
+}
+
+g();
+f();
+
+h();
+f();
+
+const boardPassengers=function(n,wait)
+{
+  const perGroup=n/3;
+  setTimeout(function(){
+    console.log(`we are Now boarding all ${n} passengers`);
+    console.log(`there are 3 groups , each with ${perGroup} passengers `);
+  },wait*1000);
+
+};
+
+boardPassengers(180,3);
+
+
+(function(){
+  const header=document.querySelector('h1');
+  header.style.color='red';
+
+  document.querySelector('body').addEventListener('click',function(){
+    header.style.color='blue';
+  });
+})();
