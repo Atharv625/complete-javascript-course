@@ -119,23 +119,83 @@ const getCountryData = function (country) {
 // })
 // // getCountryData2('usa')
 
-const whereAmI = function (lat, lng) {
-  fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=863306064189229789130x24816`)
-    .then(res => {
-      if (!res.ok) throw new Error(`Problem with geocoding: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      console.log(`You are in ${data.city}, ${data.country}`);
-      console.log(data);
-      return fetch(`https://restcountries.com/v3.1/name/${data.country}`)
-    }).then(res=>{
-       if (!res.ok) throw new Error(`Problem with geocoding: ${res.status}`);
-       return res.json();
-}).then(data=>renderCountry(data[0]))
-    .catch(err => {
-      console.error(`Error: ${err.message}`);
-    });
-};
+// const whereAmI = function (lat, lng) {
+//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=863306064189229789130x24816`)
+//     .then(res => {
+//       if (!res.ok) throw new Error(`Problem with geocoding: ${res.status}`);
+//       return res.json();
+//     })
+//     .then(data => {
+//       console.log(`You are in ${data.city}, ${data.country}`);
+//       console.log(data);
+//       return fetch(`https://restcountries.com/v3.1/name/${data.country}`)
+//     }).then(res=>{
+//        if (!res.ok) throw new Error(`Problem with geocoding: ${res.status}`);
+//        return res.json();
+// }).then(data=>renderCountry(data[0]))
+//     .catch(err => {
+//       console.error(`Error: ${err.message}`);
+//     });
+// };
 
-whereAmI(18.5912888, 74.0018887);
+// whereAmI(18.5912888, 74.0018887);
+
+
+// console.log('test start');
+// setTimeout(()=>console.log('0 sec timer'),5000);
+// Promise.resolve('revised promise 1').then(res=>console.log(res));
+// console.log('test end');
+
+
+// const lotteryPromise= new Promise(function(resolve, reject){
+  
+//   console.log(`lotter draw is happening`);
+//   setTimeout(function(){
+// if(Math.random()>=0.5){
+//     resolve(`You win`);
+//   }else{
+//     reject(new Error(`you lost your money`));
+//   }
+//   },2000)
+// });
+
+
+// lotteryPromise.then(res=>console.log(res)).
+// catch(err=>console.error(err));
+
+// const wait=function(seconds){
+//   return new Promise(function(resolve){
+//     setTimeout(resolve,seconds*1000);
+
+//   })
+// }
+// wait(2).then(()=>{console.log('i Waited for 2 seconds');
+// return wait(2);}
+
+// ).then(()=>console.log(`I waited for 1 second`))
+
+
+
+// navigator.geolocation.getCurrentPosition(position => console.log(position),
+// err=>console.error(err));
+// console.log('getting position');
+
+const imagesContainer=document.querySelector('.images');
+function createImage(imgpath){
+  return new Promise((resolve,reject)=>
+  {
+    const img=document.createElement('img');
+    img.src=imgpath;
+    img.addEventListener('load',()=>
+    {
+      imagesContainer.append(img);
+      resolve(img);
+    });
+    img.addEventListener('error',()=>{
+      reject(new Error(`images not found at path :${imgpath}`));
+    });
+  }
+ 
+  )
+}
+
