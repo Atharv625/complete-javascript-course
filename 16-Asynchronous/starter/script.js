@@ -1,5 +1,7 @@
 'use strict';
 
+// const { data } = require("autoprefixer");
+
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
@@ -180,22 +182,210 @@ const getCountryData = function (country) {
 // err=>console.error(err));
 // console.log('getting position');
 
-const imagesContainer=document.querySelector('.images');
-function createImage(imgpath){
-  return new Promise((resolve,reject)=>
-  {
-    const img=document.createElement('img');
-    img.src=imgpath;
-    img.addEventListener('load',()=>
-    {
-      imagesContainer.append(img);
-      resolve(img);
-    });
-    img.addEventListener('error',()=>{
-      reject(new Error(`images not found at path :${imgpath}`));
-    });
+// const imagesContainer=document.querySelector('.images');
+// function createImage(imgpath){
+//   return new Promise((resolve,reject)=>
+//   {
+//     const img=document.createElement('img');
+//     img.src=imgpath;
+//     img.addEventListener('load',()=>
+//     {
+//       imagesContainer.append(img);
+//       resolve(img);
+//     });
+//     img.addEventListener('error',()=>{
+//       reject(new Error(`images not found at path :${imgpath}`));
+//     });
+//   });
+// };
+
+
+// function wait(seconds){
+//   return new Promise(resolve=>setInterval(resolve,seconds*1000));
+// }
+
+// let currentImg; // global variable to track currently displayed image
+
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 1 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//     return createImage('img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 2 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//   })
+//   .catch(err => {
+//     console.error('Error:', err);
+//   });
+
+
+// Helper function to promisify geolocation
+const getPosition = function () {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  try {
+    console.log('Getting position...');
+
+    // 1) Get current position
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lng } = pos.coords;
+
+    // 2) Reverse geocoding
+    const resGeo = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json&auth=863306064189229789130x24816`
+    );
+    if (!resGeo.ok) throw new Error('Problem getting location data');
+    const dataGeo = await resGeo.json();
+    console.log(dataGeo);
+
+    // 3) Country data
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    if (!res.ok) throw new Error('Problem getting country data');
+    const data = await res.json();
+    console.log(data);
+
+    renderCountry(data[0]);
+return `${dataGeo.city}, ${dataGeo.country}`;
+
+  } catch (err) {
+    console.error(`💥 ${err.message}`);
   }
- 
-  )
+};
+// console.log('1 : will get loaction');
+
+// whereAmI().then(city=>console.log(`2:${city}`)).catch(err=>console.error(`2:${err.message}`)).
+// finally(()=>console.log('3 : finished getting loaction'));
+
+
+// console.log('3: finished getting loaction');
+
+// (async function () {
+//   try{
+//     const city = await whereAmI();
+//     console.log(`2: ${city}`)
+
+//   }
+//   catch(err){
+//     console.error(`2: ${err.message}`)
+
+//   }
+//   finally{
+//     console.log('3: finished getting loaction');
+//   }
+// })();
+
+const getJSON=function(url, errorMsg='something went wrong'){
+  return fetch(url).then(response =>{
+    if(!response.ok)throw new Error(`${errorMsg} (${response.status})`);
+    return response.json();
+  })
 }
 
+
+// const get3Countries=async function(c1,c2,c3){
+//   try{
+//     // const [data1]=await getJSON( `https://restcountries.com/v3.1/name/${c1}`);
+//     // const [data2]=await getJSON( `https://restcountries.com/v3.1/name/${c2}`);
+//     // const [data3]=await getJSON( `https://restcountries.com/v3.1/name/${c3}`);
+//     //  console.log(data1.capital, data2.capital,data3.capital);
+//     const data= await Promise.all([
+//       getJSON( `https://restcountries.com/v3.1/name/${c1}`),
+//       getJSON( `https://restcountries.com/v3.1/name/${c2}`),
+//       getJSON( `https://restcountries.com/v3.1/name/${c3}`),
+
+//     ]);
+    
+//    console.log(data.map(d=>d[0].capital));
+//   }catch(err){
+//       console.error(err);
+//   }
+// }
+
+// get3Countries('usa','uae','india');
+(async function (c1, c2, c3) {
+  try {
+    const res = await Promise.race([
+      getJSON(`https://restcountries.com/v3.1/name/${c1}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c2}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+
+    console.log(res[0]);
+  } catch (err) {
+    console.error('Error:', err.message);
+  }
+})('usa', 'uae', 'india');
+
+
+
+
+(async function () {
+  try {
+    const res = await Promise.race([
+      getJSON(`https://restcountries.com/v3.1/name/india`),
+      getJSON(`https://restcountries.com/v3.1/name/usa`),
+      getJSON(`https://restcountries.com/v3.1/name/uae`),
+    ]);
+
+    console.log(res[0]);
+  } catch (err) {
+    console.error('Error:', err.message);
+  }
+})();
+
+
+
+const timeout = function (sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error('Request took too long!'));
+    }, sec * 1000);
+  });
+};
+
+Promise.race([
+  getJSON(`https://restcountries.com/v2/name/tanzania`),
+  timeout(5),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
+
+// Promise.allSettled
+Promise.allSettled([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res));
+
+Promise.all([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
+
+// Promise.any [ES2021]
+Promise.any([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
